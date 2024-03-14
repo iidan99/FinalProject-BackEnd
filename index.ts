@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import userRouter from "./Routers/UserRouter";
 import { userAgentParser } from "./middlewares/ua-parser";
+import bodyParser from "body-parser";
 
 require("dotenv").config();
 
@@ -23,6 +24,8 @@ mongoose
 
 app.use(cors());
 app.set("view engine", "ejs");
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/api/user", userRouter);
 
