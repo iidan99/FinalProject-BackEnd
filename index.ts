@@ -1,20 +1,33 @@
 import express from "express";
 import axios from "axios";
+import mongoose from "mongoose";
+import cors from "cors";
+import userRouter from "./Routers/UserRouter";
+import { userAgentParser } from "./middlewares/ua-parser";
+
+require("dotenv").config();
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
+const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017";
+const expirationTime = `${
+  Number(process.env.EXPIRATION_TIME_IN_MS) || 30000
+}ms`;
 
-app.get("/", function (req: express.Request, res: express.Response) {
-  res.send("Hello World!");
-});
+mongoose
+  .connect(mongoUri)
+  .then(() => {
+    console.log("MongoDB is connected!");
+  })
+  .catch((err) => console.error(err));
 
-app.get("/posts", async function (req: express.Request, res: express.Response) {
-  try {
-    const response = await axios.get("https://randomuser.me/api/?results=10");
-    const responseData = response.data;
-    res.status(200).json(responseData);
-  } catch {
-    res.status(500).send("Internal Error");
-  }
+app.use(cors());
+app.set("view engine", "ejs");
+
+app.use("/api/user", userRouter);
+
+app.get("/", (req, res) => {
+  res.render("index"); // Renders index.ejs if using EJS
 });
 
 app.listen(port, function () {
