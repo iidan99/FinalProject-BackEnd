@@ -30,7 +30,11 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use("/api/user", userRouter);
 
 app.get("/", (req, res) => {
-  res.render("index"); // Renders index.ejs if using EJS
+  res.send("main data screen");
+});
+
+app.get("*", (req, res) => {
+  res.send("Error 404 Page not found");
 });
 
 app.listen(port, function () {
