@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
 
 const UserSchema = new Schema({
+  firstName: { type: String },
+  lastName: { type: String },
   userId: { type: String },
   email: { type: String },
   phoneNumber: { type: String },
@@ -11,4 +13,4 @@ const UserSchema = new Schema({
   update_date: { type: Date },
 });
 
-export const UserModal = model("userModal", UserSchema);
+export const UserModel = model("userModel", UserSchema);

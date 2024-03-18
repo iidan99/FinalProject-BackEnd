@@ -3,17 +3,17 @@ import axios from "axios";
 import mongoose from "mongoose";
 import cors from "cors";
 import userRouter from "./Routers/UserRouter";
-import { userAgentParser } from "./middlewares/ua-parser";
 import bodyParser from "body-parser";
-
+import jwt from "jsonwebtoken";
+import { getCountries } from "./Controllers/Countries/CountriesController";
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT;
 const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017";
-const expirationTime = `${
-  Number(process.env.EXPIRATION_TIME_IN_MS) || 30000
-}ms`;
+export const expirationTime = `${
+  Number(process.env.EXPIRATION_TIME_IN_MS) || 24
+}h`;
 
 mongoose
   .connect(mongoUri)
@@ -26,9 +26,15 @@ app.use(cors());
 app.set("view engine", "ejs");
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(express.static("./assets"));
+app.use("/countries", express.static("./json"));
 
-app.use("/api/user", userRouter);
+app.use("/user", userRouter);
 
+app.get("/countries", getCountries);
+app.post("/logout", (req: express.Request, res: express.Response) => {
+  res.status(200).send("Logout Success");
+});
 app.get("/", (req, res) => {
   res.send("main data screen");
 });
